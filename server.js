@@ -6,7 +6,14 @@ const app = express();
 // No limit for body parser
 app.use(bodyParser.json());
 
-app.all('*', function (req, res, next) {
+app.all('/', function (req, res, next) {
+    const targetURL = req.query.targetURL;
+
+    if (!targetURL) {
+        res.status(500).json({ error: 'There is no targetURL parameter in the request' });
+        return;
+    }
+
     // Set CORS headers: allow all origins, methods, and headers
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "*");
@@ -16,13 +23,8 @@ app.all('*', function (req, res, next) {
         // CORS Preflight
         res.send();
     } else {
-        const targetURL = req.header('Target-URL');
-        if (!targetURL) {
-            res.status(500).json({ error: 'There is no Target-Endpoint header in the request' });
-            return;
-        }
         request({
-            url: targetURL + req.url,
+            url: targetURL,
             method: req.method,
             json: req.body,
             headers: { 'Authorization': req.header('Authorization') }
