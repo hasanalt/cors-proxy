@@ -17,7 +17,7 @@ app.all('/', function (req, res, next) {
     // Set CORS headers: allow all origins, methods, and headers
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "*");
-    res.header("Access-Control-Allow-Headers", req.header('access-control-request-headers'));
+    res.header("Access-Control-Allow-Headers", "*");
 
     if (req.method === 'OPTIONS') {
         // CORS Preflight
@@ -27,7 +27,8 @@ app.all('/', function (req, res, next) {
             url: targetURL,
             method: req.method,
             json: req.body,
-            headers: { 'Authorization': req.header('Authorization') }
+            headers: { 'Authorization': req.header('Authorization') },
+            rejectUnauthorized: false // Add this to handle HTTPS requests
         }, function (error, response, body) {
             if (error) {
                 console.error('Error:', error);
